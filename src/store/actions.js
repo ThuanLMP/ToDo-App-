@@ -1,4 +1,4 @@
-import { SET_TASK_NAME, SET_TASK_DESCRIPTION, ADD_TASK, DELETE_TASK, UPDATE_LIST_TASK, UPDATE_SHOW_LIST, UPDATE_EDIT_FORM, SET_TASK, UPDATE_TASK_IN_LIST, SET_TASK_EDIT_NAME,SET_TASK_EDIT_DESCRIPTION } from './constants'
+import { SET_TASK_NAME, SET_TASK_DESCRIPTION, ADD_TASK, UPDATE_LIST_TASK, UPDATE_SHOW_LIST, UPDATE_EDIT_FORM, SET_TASK, UPDATE_TASK_IN_LIST, SET_TASK_EDIT_NAME,SET_TASK_EDIT_DESCRIPTION, SET_TASK_DEADLINE, SET_TASK_EDIT_DEADLINE } from './constants'
 
 
 
@@ -8,6 +8,11 @@ export const setTaskName = payload => ({
 })
 export const setTaskDescription = payload => ({
     type: SET_TASK_DESCRIPTION,
+    payload
+})
+
+export const setTaskDeadline = payload => ({
+    type: SET_TASK_DEADLINE,
     payload
 })
 
@@ -48,5 +53,9 @@ export const setTaskEditName = payload => ({
 
 export const setTaskEditDescription = payload => ({
     type: SET_TASK_EDIT_DESCRIPTION,
+    payload
+})
+export const setTaskEditDeadline = payload => ({
+    type: SET_TASK_EDIT_DEADLINE,
     payload
 })

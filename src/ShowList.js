@@ -10,11 +10,13 @@ function ShowList() {
     const { listTask, task, showList, editForm, taskEdit } = state
     let indexEdit = 0;
     const indexOfList = []
+    const timeNow = new Date()
+    
     // Delete task in List Task
-    const deleteTask = (value,index) => {
+    const deleteTask = (value, index) => {
         if (window.confirm('Are you sure delete task ?')) {
             const newList = [...listTask]
-            newList.splice(indexOfList[index],1)
+            newList.splice(indexOfList[index], 1)
             dispatch(actions.updateListTask(newList))
         }
     }
@@ -25,17 +27,27 @@ function ShowList() {
         newList[indexOfList[index]].state = !newList[indexOfList[index]].state
         dispatch(actions.updateListTask(newList))
     }
+
     // Update edit form
     const updateForm = (input) => {
         dispatch(actions.updateEditForm(input))
     }
 
     // Set Task to Edit
-    const setTask = (value)=>{
+    const setTask = (value) => {
         dispatch(actions.setTask(value))
     }
-    
-    
+    // Check deadline <24h
+
+    const checkDeadline= (deadline) => {
+        const timeDeadline = new Date(deadline)
+        if((timeDeadline.getTime()-timeNow.getTime()<86400000) && showList===false){
+            return true
+        }
+        return false
+    }
+
+
     return (
         <div className='list'>
             <div className='type-list'>
@@ -49,25 +61,31 @@ function ShowList() {
                     <th>ID</th>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Deadline</th>
                     <th>Checked</th>
                     <th>Action</th>
                 </tr>
 
                 {
-                    listTask.filter((value,index) => {
-                        if(value.state===showList){
+                    listTask.filter((value, index) => {
+                        if (value.state === showList) {
                             indexOfList.push(index)
                         }
-                        
+
                         return value.state === showList
                     })
                         .map((value, index) => {
                             return (
-                                <tr className='content-list' key={index}>
+                                <tr className=  {checkDeadline(value.deadline) ? 'content-list-deadline' : 'content-list'}  key={index}>
                                     <td className='task-id' width={'7%'} >{index + 1}</td>
                                     <td className='task-name' width={'13%'}>{value.name}</td>
-                                    <td className='task-description' width={'60%'}>
+                                    <td className='task-description' width={'54%'}>
                                         {value.description}
+                                    </td>
+                                    <td width={'6%'}>
+                                        {
+                                            value.deadline
+                                        }
                                     </td>
 
                                     <td className='task-checked' width={'10%'}>
@@ -106,7 +124,7 @@ function ShowList() {
                 }
 
             </table>
-            { editForm && <EditTask indexEdit = {indexEdit} /> }
+            {editForm && <EditTask indexEdit={indexEdit} />}
         </div>
     )
 }

@@ -1,14 +1,23 @@
 import { useStore, actions } from './store';
 import './App.css';
-import { useEffect, useMemo } from 'react';
+import { useEffect} from 'react';
 import ShowList from './ShowList';
-import EditTask from './EditTask'
+import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars'
 
-
+const convertDateToStringFormat = (dateInput) => {
+    let day = dateInput.getDate();
+    let month = dateInput.getMonth()+1;
+    let year = dateInput.getFullYear();
+    let hours = dateInput.getHours();
+    let minutes = dateInput.getMinutes();
+    const result = month.toString() + "/" +  day.toString() + "/" + year.toString() + " " + hours.toString() + ":" + minutes.toString();
+    return result
+  }
 function App() {
- 
+
   const [state, dispatch] = useStore()
   const { listTask, task, showList, editForm } = state
+  const minDate = new Date();
   
   // Set list task in local Storage
   const setListInLocalStorage = () => {
@@ -16,11 +25,11 @@ function App() {
     localStorage.setItem('listTask', jsonJobs)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setListInLocalStorage()
-  },[listTask])
-  
-  
+  }, [listTask])
+
+
   // Validate Form
   const validationForm = () => {
     let returnData = {
@@ -35,17 +44,19 @@ function App() {
     return returnData;
   }
 
-  
+
   // add task to list
   const handleAdd = () => {
     dispatch(actions.addTask(task))
   }
- 
+
   // clear input
   const clearInput = () => {
     dispatch(actions.setTaskName(''))
     dispatch(actions.setTaskDescription(''))
+    dispatch(actions.setTaskDeadline(minDate))
   }
+  
   return (
     <div className="App">
       <div className="App-header">
@@ -59,7 +70,7 @@ function App() {
           alert(validation.msg)
         }
         else {
-          handleAdd()   
+          handleAdd()
           clearInput()
         }
       }}>
@@ -72,11 +83,23 @@ function App() {
         <input className='input-description' type="text" value={task.description} placeholder="Description..." onChange={(e) => {
           dispatch(actions.setTaskDescription(e.target.value))
         }} />
+        <br />
+        <div className='deadline'>
+          <DateTimePickerComponent
+            placeholder='Choose a date and time'
+            value={new Date(task.deadline)}
+            onChange={(e) => {
+              dispatch(actions.setTaskDeadline(convertDateToStringFormat(e.target.value)))
+            }}
+           min= {minDate}
+          >
+          </DateTimePickerComponent>
+        </div>
 
       </form>
 
-        <ShowList />
-       
+      <ShowList />
+
     </div>
   );
 }
